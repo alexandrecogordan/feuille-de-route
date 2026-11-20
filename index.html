@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feuille de route · Mentorat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#03036e; --navy-2:#0b0b85; --blue:#1414ff; --pink:#f6b6df; --gold:#f2c46b;
+    --white:#ffffff; --ink:#14143a; --muted:#c9c9f2; --line:rgba(255,255,255,.75);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--navy);color:var(--white);font-family:Montserrat,system-ui,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:36px 22px 70px}
+  .status{position:sticky;top:0;z-index:5;display:flex;justify-content:flex-end;padding:10px 0 0;pointer-events:none}
+  .pill-status{pointer-events:auto;font-size:11px;font-weight:600;letter-spacing:.04em;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:5px 11px;border-radius:999px;color:var(--muted)}
+  .pill-status.ok{color:#bff3cf}
+  .pill-status.warn{color:#ffd9a1}
+  header{text-align:center;margin-bottom:26px}
+  .kicker{font-size:12px;letter-spacing:.35em;font-weight:500;text-transform:uppercase;color:var(--muted)}
+  h1{font-weight:800;font-size:clamp(34px,7vw,54px);margin:10px 0 8px;letter-spacing:.01em}
+  .sub{font-size:14px;margin:0;color:#e7e7ff}
+  hr{border:0;border-top:2px solid var(--line);margin:22px 0 30px}
+  .field{position:relative;margin-bottom:26px}
+  .label{position:absolute;top:-11px;left:14px;z-index:1;background:var(--blue);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 26px;border-radius:999px}
+  input[type=text],input[type=date],textarea{width:100%;border:0;border-radius:14px;background:var(--white);color:var(--ink);font:500 15px Montserrat,sans-serif;padding:16px 16px 12px;outline:none;transition:box-shadow .15s}
+  input:focus,textarea:focus{box-shadow:0 0 0 3px var(--pink)}
+  input:disabled,textarea:disabled{background:#e9e9f3;cursor:not-allowed}
+  .field input{padding-top:20px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  h2{font-weight:900;font-size:22px;margin:40px 0 4px;letter-spacing:.01em;text-transform:uppercase}
+  .hint{font-size:13px;margin:0 0 20px;color:#e7e7ff}
+  .obj{display:grid;grid-template-columns:54px 1fr;align-items:stretch;margin-bottom:16px}
+  .num{font-weight:900;font-size:68px;line-height:.9;color:var(--pink);user-select:none;text-align:left;margin-right:-10px;position:relative;z-index:0}
+  .card{background:var(--white);border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px;position:relative;z-index:1}
+  .card input,.card textarea{padding:6px 2px;border-radius:6px}
+  .card input{font-weight:700;font-size:15.5px}
+  .card textarea{font-size:14px;resize:vertical;min-height:44px;color:#3a3a66}
+  .card input:focus,.card textarea:focus{box-shadow:0 0 0 2px var(--pink)}
+  .rm{position:absolute;top:8px;right:10px;border:0;background:none;color:#9a9ac0;font-size:18px;cursor:pointer;line-height:1}
+  .rm:hover{color:#d33}
+  .add{margin-top:6px;background:transparent;color:var(--white);border:1.5px dashed rgba(255,255,255,.5);border-radius:12px;font:600 13px Montserrat,sans-serif;padding:10px 16px;cursor:pointer}
+  .add:hover{border-color:var(--pink);color:var(--pink)}
+  .todo{display:grid;grid-template-columns:34px 1fr 150px 26px;gap:12px;align-items:center;margin-bottom:10px}
+  .check{appearance:none;-webkit-appearance:none;width:32px;height:32px;border:2px solid var(--gold);border-radius:7px;background:transparent;cursor:pointer;display:grid;place-items:center;margin:0}
+  .check:checked{background:var(--gold)}
+  .check:checked::after{content:"";width:9px;height:15px;border:solid var(--navy);border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-2px)}
+  .todo input[type=text],.todo input[type=date]{border-radius:999px;padding:9px 16px;font-size:14px}
+  .todo.done input[type=text]{text-decoration:line-through;color:#8a8ab0}
+  .todo .rm{position:static;color:rgba(255,255,255,.45)}
+  .todo .rm:hover{color:var(--pink)}
+  .empty{font-size:13px;color:var(--muted);margin:0 0 8px}
+  .notes{display:grid;grid-template-columns:54px 1fr;gap:10px;margin-top:44px}
+  .notes-title{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:900;font-size:34px;letter-spacing:.02em;text-align:right}
+  .notes textarea{min-height:220px;resize:vertical;line-height:1.55;padding:16px}
+  footer{margin-top:40px;font-size:11.5px;color:var(--muted);text-align:center}
+  @media (max-width:560px){
+    .row{grid-template-columns:1fr;gap:0}
+    .todo{grid-template-columns:34px 1fr 26px}
+    .todo input[type=date]{grid-column:2/3}
+    .num{font-size:52px}
+    .obj{grid-template-columns:42px 1fr}
+    .notes{grid-template-columns:1fr}
+    .notes-title{writing-mode:horizontal-tb;transform:none;text-align:left;font-size:22px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="status"><span id="status" class="pill-status">Connexion…</span></div>
+  <header>
+    <div class="kicker">Programme de mentorat</div>
+    <h1>FEUILLE DE ROUTE</h1>
+    <p class="sub">Indiquez sur cette feuille de route de votre mentorat vos différents objectifs.</p>
+  </header>
+  <hr>
+
+  <div class="field"><span class="label">Nom mentor</span><input type="text" data-key="mentor" autocomplete="off"></div>
+  <div class="field"><span class="label">Nom mentee</span><input type="text" data-key="mentee" autocomplete="off"></div>
+  <div class="row">
+    <div class="field"><span class="label">Promotion</span><input type="text" data-key="promotion" autocomplete="off"></div>
+    <div class="field"><span class="label">Date 1ère rencontre</span><input type="date" data-key="date"></div>
+  </div>
+
+  <h2>Objectifs</h2>
+  <p class="hint">Indiquez le nom d’au moins trois objectifs et explicitez-les.</p>
+  <div id="objectives"></div>
+  <button class="add" id="addObj" type="button">+ Ajouter un objectif</button>
+
+  <h2>To-do list</h2>
+  <p class="hint">Indiquez les tâches et les deadlines que vous prévoyez.</p>
+  <div id="todos"></div>
+  <button class="add" id="addTodo" type="button">+ Ajouter une tâche</button>
+
+  <div class="notes">
+    <div class="notes-title">NOTES</div>
+    <textarea data-key="notes" placeholder="Notes de séance, retours, ressources partagées…"></textarea>
+  </div>
+
+  <footer id="foot">Les modifications sont enregistrées automatiquement et visibles par toute personne qui a le lien.</footer>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc as fDoc, collection as fCol, query as fQuery, orderBy as fOrder, onSnapshot as fSnap, setDoc, deleteDoc, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = { apiKey: "AIzaSyBS7MbwWsacPJPjbXktQjG9ZO-2RhAVoJw", authDomain: "feuille-de-route-a3c47.firebaseapp.com", projectId: "feuille-de-route-a3c47", storageBucket: "feuille-de-route-a3c47.firebasestorage.app", messagingSenderId: "1037626226185", appId: "1:1037626226185:web:98dd6f52d3d0b41edf6ad8" };
+const mapErr = e => ({ code: (e && e.code === 'permission-denied') ? 'invalid_argument' : (e && e.code) || 'unavailable', message: e && e.message });
+const wrapDoc = r => ({ id: r.id, set: d => setDoc(r, d).catch(e => { throw mapErr(e); }), delete: () => deleteDoc(r).catch(e => { throw mapErr(e); }) });
+const wrapQ = (q, col) => ({
+  orderBy: f => wrapQ(fQuery(q, fOrder(f)), col),
+  doc: id => wrapDoc(id ? fDoc(col, id) : fDoc(col)),
+  onSnapshot: (next, err) => fSnap(q, s => next({ docs: s.docs.map(d => ({ id: d.id, data: () => d.data() })), metadata: s.metadata }), e => err && err(mapErr(e)))
+});
+async function connectDb() {
+  if (!firebaseConfig) return null;
+  const fdb = getFirestore(initializeApp(firebaseConfig));
+  try {
+    const m = location.hash.match(/^#seed=(.+)$/);
+    if (m) {
+      history.replaceState(null, '', location.pathname);
+      const SEED = JSON.parse(decodeURIComponent(escape(atob(m[1]))));
+      const meta = fDoc(fdb, 'meta/seeded');
+      if (!(await getDoc(meta)).exists()) {
+        const b = writeBatch(fdb);
+        for (const [c, docs] of Object.entries(SEED)) for (const [id, d] of Object.entries(docs)) b.set(fDoc(fdb, c, id), d);
+        b.set(meta, { at: Date.now() });
+        await b.commit();
+      }
+    }
+  } catch (_) {}
+  return { doc: p => wrapDoc(fDoc(fdb, p)), collection: p => { const c = fCol(fdb, p); return wrapQ(c, c); } };
+}
+(() => {
+  const statusEl = document.getElementById('status');
+  const setStatus = (t, cls) => { statusEl.textContent = t; statusEl.className = 'pill-status' + (cls ? ' ' + cls : ''); };
+
+  let db = null, readOnly = false;
+  const values = {};          // key -> last known remote value
+  const dirty = new Set();    // keys with local edits not yet confirmed
+  const writers = {};         // per-doc write queue
+  let objectives = {};        // n -> {title, detail}
+  let objMax = 4;
+  let todos = [];
+
+  // ---------- serialised, debounced writes (one in flight per doc) ----------
+  function queueWrite(path, body, delay = 500) {
+    const w = writers[path] || (writers[path] = { timer: null, busy: false, next: null });
+    w.next = body;
+    clearTimeout(w.timer);
+    w.timer = setTimeout(() => flush(path), delay);
+    setStatus('Enregistrement…');
+  }
+  async function flush(path) {
+    const w = writers[path];
+    if (!w || w.busy || !w.next || !db) return;
+    const body = w.next; w.next = null; w.busy = true;
+    try {
+      await db.doc(path).set(body);
+      if (!Object.values(writers).some(x => x.next || x.busy && x !== w)) setStatus('Enregistré', 'ok');
+    } catch (e) {
+      if (e && e.code === 'invalid_argument') makeReadOnly();
+      else if (e && e.code === 'unavailable') { w.next = w.next || body; setTimeout(() => flush(path), 800 + Math.random() * 800); }
+      else setStatus('Échec de l’enregistrement', 'warn');
+    } finally {
+      w.busy = false;
+      if (w.next) flush(path);
+    }
+  }
+  function makeReadOnly() {
+    readOnly = true;
+    document.querySelectorAll('input,textarea,button.add,button.rm').forEach(el => el.disabled = true);
+    setStatus('Lecture seule', 'warn');
+    document.getElementById('foot').textContent = 'Vous pouvez consulter cette feuille de route, mais pas la modifier.';
+  }
+
+  // ---------- simple fields ----------
+  function bindField(el, key) {
+    el.addEventListener('input', () => {
+      dirty.add(key);
+      queueWrite('fields/' + key, { v: el.value, at: Date.now() });
+    });
+    el.addEventListener('blur', () => { setTimeout(() => { if (!writers['fields/' + key]?.next) dirty.delete(key); }, 1500); });
+  }
+  document.querySelectorAll('[data-key]').forEach(el => bindField(el, el.dataset.key));
+
+  function applyField(key, v) {
+    values[key] = v;
+    document.querySelectorAll('[data-key="' + key + '"]').forEach(el => {
+      if (document.activeElement === el || dirty.has(key)) return;
+      if (el.value !== v) el.value = v;
+    });
+  }
+
+  // ---------- objectives ----------
+  const objBox = document.getElementById('objectives');
+  function renderObjectives() {
+    const keys = Object.keys(objectives).map(Number);
+    objMax = Math.max(4, ...keys, objMax);
+    // build any missing rows; never rebuild a row (keeps focus)
+    for (let n = 1; n <= objMax; n++) {
+      let row = objBox.querySelector('[data-n="' + n + '"]');
+      if (!row) {
+        row = document.createElement('div');
+        row.className = 'obj'; row.dataset.n = n;
+        row.innerHTML = '<div class="num"></div><div class="card"><input type="text" placeholder="Intitulé de l’objectif" autocomplete="off"><textarea rows="2" placeholder="Explicitez : pourquoi, comment, d’ici quand…"></textarea></div>';
+        row.querySelector('.num').textContent = n;
+        if (n > 4) {
+          const rm = document.createElement('button');
+          rm.className = 'rm'; rm.type = 'button'; rm.title = 'Supprimer cet objectif'; rm.textContent = '×';
+          rm.addEventListener('click', () => removeObjective(n));
+          row.querySelector('.card').appendChild(rm);
+        }
+        const [ti, de] = row.querySelectorAll('input,textarea');
+        const push = () => { dirty.add('obj' + n); queueWrite('objectives/o' + n, { n, title: ti.value, detail: de.value }); };
+        ti.addEventListener('input', push); de.addEventListener('input', push);
+        const release = () => setTimeout(() => { if (!writers['objectives/o' + n]?.next) dirty.delete('obj' + n); }, 1500);
+        ti.addEventListener('blur', release); de.addEventListener('blur', release);
+        if (readOnly) row.querySelectorAll('input,textarea,button').forEach(e => e.disabled = true);
+        objBox.appendChild(row);
+      }
+      const o = objectives[n] || { title: '', detail: '' };
+      const [ti, de] = row.querySelectorAll('input,textarea');
+      if (!dirty.has('obj' + n)) {
+        if (document.activeElement !== ti && ti.value !== (o.title || '')) ti.value = o.title || '';
+        if (document.activeElement !== de && de.value !== (o.detail || '')) de.value = o.detail || '';
+      }
+    }
+    // drop rows above max that were removed remotely
+    objBox.querySelectorAll('.obj').forEach(r => { if (+r.dataset.n > objMax) r.remove(); });
+  }
+  function removeObjective(n) {
+    if (!db || readOnly) return;
+    // shift later objectives down so numbering stays continuous
+    const max = objMax;
+    const rows = [];
+    for (let i = 1; i <= max; i++) {
+      const r = objBox.querySelector('[data-n="' + i + '"]');
+      const [ti, de] = r.querySelectorAll('input,textarea');
+      rows.push({ title: ti.value, detail: de.value });
+    }
+    rows.splice(n - 1, 1);
+    objMax = Math.max(4, max - 1);
+    objBox.querySelectorAll('.obj').forEach(r => r.remove());
+    objectives = {};
+    rows.forEach((o, i) => objectives[i + 1] = o);
+    renderObjectives();
+    (async () => {
+      for (let i = n; i <= rows.length; i++) await db.doc('objectives/o' + i).set({ n: i, ...rows[i - 1] });
+      await db.doc('objectives/o' + max).delete();
+    })().catch(() => setStatus('Échec de l’enregistrement', 'warn'));
+  }
+  document.getElementById('addObj').addEventListener('click', () => {
+    objMax += 1;
+    const n = objMax;
+    renderObjectives();
+    if (db && !readOnly) db.doc('objectives/o' + n).set({ n, title: '', detail: '' }).catch(() => {});
+    objBox.querySelector('[data-n="' + n + '"] input').focus();
+  });
+
+  // ---------- todos ----------
+  const todoBox = document.getElementById('todos');
+  function renderTodos() {
+    const seen = new Set();
+    todos.forEach((t, idx) => {
+      seen.add(t.id);
+      let row = todoBox.querySelector('[data-id="' + t.id + '"]');
+      if (!row) {
+        row = document.createElement('div');
+        row.className = 'todo'; row.dataset.id = t.id;
+        row.innerHTML = '<input type="checkbox" class="check" aria-label="Fait"><input type="text" placeholder="Tâche" autocomplete="off"><input type="date" aria-label="Deadline" title="Deadline"><button class="rm" type="button" title="Supprimer">×</button>';
+        const [cb, tx, dt] = row.querySelectorAll('input');
+        const push = () => {
+          dirty.add('todo' + t.id);
+          const cur = todos.find(x => x.id === t.id) || {};
+          row.classList.toggle('done', cb.checked);
+          queueWrite('todos/' + t.id, { text: tx.value, deadline: dt.value, done: cb.checked, created: cur.created || Date.now() }, 400);
+        };
+        tx.addEventListener('input', push); dt.addEventListener('change', push); cb.addEventListener('change', push);
+        tx.addEventListener('blur', () => setTimeout(() => { if (!writers['todos/' + t.id]?.next) dirty.delete('todo' + t.id); }, 1500));
+        row.querySelector('.rm').addEventListener('click', () => {
+          if (!db || readOnly) return;
+          todos = todos.filter(x => x.id !== t.id); row.remove(); renderEmpty();
+          db.doc('todos/' + t.id).delete().catch(() => setStatus('Échec de la suppression', 'warn'));
+        });
+        if (readOnly) row.querySelectorAll('input,button').forEach(e => e.disabled = true);
+      }
+      todoBox.appendChild(row); // keeps order
+      const [cb, tx, dt] = row.querySelectorAll('input');
+      if (!dirty.has('todo' + t.id)) {
+        if (document.activeElement !== tx && tx.value !== (t.text || '')) tx.value = t.text || '';
+        if (document.activeElement !== dt && dt.value !== (t.deadline || '')) dt.value = t.deadline || '';
+        cb.checked = !!t.done;
+        row.classList.toggle('done', !!t.done);
+      }
+    });
+    todoBox.querySelectorAll('.todo').forEach(r => { if (!seen.has(r.dataset.id)) r.remove(); });
+    renderEmpty();
+  }
+  function renderEmpty() {
+    let e = todoBox.querySelector('.empty');
+    if (!todoBox.querySelector('.todo')) {
+      if (!e) { e = document.createElement('p'); e.className = 'empty'; e.textContent = 'Aucune tâche pour l’instant.'; todoBox.prepend(e); }
+    } else if (e) e.remove();
+  }
+  document.getElementById('addTodo').addEventListener('click', async () => {
+    if (!db || readOnly) return;
+    const ref = db.collection('todos').doc();
+    const t = { id: ref.id, text: '', deadline: '', done: false, created: Date.now() };
+    todos.push(t); renderTodos();
+    todoBox.querySelector('[data-id="' + t.id + '"] input[type=text]').focus();
+    try { await ref.set({ text: '', deadline: '', done: false, created: t.created }); }
+    catch (e) { if (e && e.code === 'invalid_argument') makeReadOnly(); else setStatus('Échec de l’enregistrement', 'warn'); }
+  });
+
+  renderObjectives(); renderEmpty();
+
+  // ---------- connect ----------
+  (async () => {
+    const loadTimer = setTimeout(() => setStatus('Données injoignables pour le moment', 'warn'), 10000);
+    let gotLive = 0;
+    const live = (snap) => { if (!snap.metadata.fromCache && ++gotLive >= 3) { clearTimeout(loadTimer); setStatus('À jour', 'ok'); } };
+    db = await connectDb();
+    if (!db) {
+      clearTimeout(loadTimer);
+      setStatus('Hors ligne', 'warn');
+      document.querySelectorAll('input,textarea,button').forEach(el => el.disabled = true);
+      document.getElementById('foot').textContent = 'Base de données non configurée.';
+      return;
+    }
+
+    const onErr = () => { clearTimeout(loadTimer); setStatus('Connexion perdue, rechargez la page', 'warn'); };
+    db.collection('fields').onSnapshot(snap => {
+      snap.docs.forEach(d => applyField(d.id, String((d.data() || {}).v ?? '')));
+      live(snap);
+    }, onErr);
+    db.collection('objectives').onSnapshot(snap => {
+      objectives = {};
+      snap.docs.forEach(d => { const o = d.data() || {}; if (o.n) objectives[o.n] = o; });
+      objMax = 4; renderObjectives(); live(snap);
+    }, onErr);
+    db.collection('todos').orderBy('created').onSnapshot(snap => {
+      todos = snap.docs.map(d => ({ id: d.id, ...(d.data() || {}) }));
+      renderTodos(); live(snap);
+    }, onErr);
+  })();
+})();
+</script>
+</body>
+</html>
