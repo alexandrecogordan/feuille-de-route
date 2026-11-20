@@ -38,7 +38,7 @@
   .card{background:var(--white);border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px;position:relative;z-index:1}
   .card input,.card textarea{padding:6px 2px;border-radius:6px}
   .card input{font-weight:700;font-size:15.5px}
-  .card textarea{font-size:14px;resize:vertical;min-height:44px;color:#3a3a66}
+  .card textarea{font-size:14px;resize:none;overflow:hidden;min-height:44px;color:#3a3a66}
   .card input:focus,.card textarea:focus{box-shadow:0 0 0 2px var(--pink)}
   .rm{position:absolute;top:8px;right:10px;border:0;background:none;color:#9a9ac0;font-size:18px;cursor:pointer;line-height:1}
   .rm:hover{color:#d33}
@@ -196,7 +196,7 @@ async function connectDb() {
 
   // ---------- objectives ----------
   const objBox = document.getElementById('objectives');
-  function renderObjectives() {
+  let renderObjectives = function () {
     const keys = Object.keys(objectives).map(Number);
     objMax = Math.max(4, ...keys, objMax);
     // build any missing rows; never rebuild a row (keeps focus)
@@ -230,7 +230,7 @@ async function connectDb() {
     }
     // drop rows above max that were removed remotely
     objBox.querySelectorAll('.obj').forEach(r => { if (+r.dataset.n > objMax) r.remove(); });
-  }
+  };
   function removeObjective(n) {
     if (!db || readOnly) return;
     // shift later objectives down so numbering stays continuous
@@ -315,6 +315,11 @@ async function connectDb() {
     catch (e) { if (e && e.code === 'invalid_argument') makeReadOnly(); else setStatus('Échec de l’enregistrement', 'warn'); }
   });
 
+  const grow = el => { el.style.height = 'auto'; el.style.height = (el.scrollHeight + 2) + 'px'; };
+  document.addEventListener('input', e => { if (e.target.matches('.card textarea')) grow(e.target); });
+  const growAll = () => document.querySelectorAll('.card textarea').forEach(grow);
+  window.addEventListener('resize', growAll);
+  const _ro = renderObjectives; renderObjectives = function () { _ro(); growAll(); };
   renderObjectives(); renderEmpty();
 
   // ---------- connect ----------
